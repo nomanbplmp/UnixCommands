@@ -26,7 +26,13 @@ echo "getting linkdir"
 
 
 echo $col11
-linkdir=`echo $col11 | awk -F'/' '{print $(NF-1)}'`
+
+
+minussrc=`echo $col11 | sed -e '%'"$1"'%%'`
+
+
+linkdir=`echo $minussrc | sed -e '%'"$linkname"'%%'`
+#linkdir=`echo $col11 | awk -F'/' '{print $(NF-1)}'`
 
 
 linkto=`echo $sym | cut -d ' ' -f2`
