@@ -1,0 +1,180 @@
+Awk is one of the most powerful tools in Unix used for processing the rows and columns in a file. Awk has built in string functions and associative arrays. Awk supports most of the operators, conditional blocks, and loops available in C language. 
+
+One of the good things is that you can convert Awk scripts into Perl scripts using a2p utility. 
+
+The basic syntax of AWK:
+
+awk 'BEGIN {start_action} {action} END {stop_action}' filename
+
+Here the actions in the begin block are performed before processing the file and the actions in the end block are performed after processing the file. The rest of the actions are performed while processing the file.
+
+Examples:
+
+Create a file input_file with the following data. This file can be easily created using the output of ls -l.
+
+-rw-r--r-- 1 center center  0 Dec  8 21:39 p1
+-rw-r--r-- 1 center center 17 Dec  8 21:15 t1
+-rw-r--r-- 1 center center 26 Dec  8 21:38 t2
+-rw-r--r-- 1 center center 25 Dec  8 21:38 t3
+-rw-r--r-- 1 center center 43 Dec  8 21:39 t4
+-rw-r--r-- 1 center center 48 Dec  8 21:39 t5
+
+From the data, you can observe that this file has rows and columns. The rows are separated by a new line character and the columns are separated by a space characters. We will use this file as the input for the examples discussed here. 
+
+1. awk '{print $1}' input_file
+
+Here $1 has a meaning. $1, $2, $3... represents the first, second, third columns... in a row respectively. This awk command will print the first column in each row as shown below.
+
+-rw-r--r--
+-rw-r--r--
+-rw-r--r--
+-rw-r--r--
+-rw-r--r--
+-rw-r--r--
+
+To print the 4th and 6th columns in a file use awk '{print $4,$5}' input_file
+
+Here the Begin and End blocks are not used in awk. So, the print command will be executed for each row it reads from the file. In the next example we will see how to use the Begin and End blocks.
+
+2. awk 'BEGIN {sum=0} {sum=sum+$5} END {print sum}' input_file
+
+This will prints the sum of the value in the 5th column. In the Begin block the variable sum is assigned with value 0. In the next block the value of 5th column is added to the sum variable. This addition of the 5th column to the sum variable repeats for every row it processed. When all the rows are processed the sum variable will hold the sum of the values in the 5th column. This value is printed in the End block.
+
+3. In this example we will see how to execute the awk script written in a file. Create a file sum_column and paste the below script in that file
+
+#!/usr/bin/awk -f
+BEGIN {sum=0} 
+{sum=sum+$5} 
+END {print sum}
+
+Now execute the the script using awk command as 
+
+awk -f sum_column input_file.
+
+This will run the script in sum_column file and displays the sum of the 5th column in the input_file.
+
+4. awk '{ if($9 == "t4") print $0;}' input_file
+
+This awk command checks for the string "t4" in the 9th column and if it finds a match then it will print the entire line. The output of this awk command is
+
+-rw-r--r-- 1 pcenter pcenter 43 Dec  8 21:39 t4
+
+5. awk 'BEGIN { for(i=1;i<=5;i++) print "square of", i, "is",i*i; }'
+
+This will print the squares of first numbers from 1 to 5. The output of the command is
+
+square of 1 is 1
+square of 2 is 4
+square of 3 is 9
+square of 4 is 16
+square of 5 is 25
+
+Notice that the syntax of “if” and “for” are similar to the C language.
+
+Awk Built in Variables: 
+
+You have already seen $0, $1, $2... which prints the entire line, first column, second column... respectively. Now we will see other built in variables with examples. 
+
+FS - Input field separator variable:
+
+So far, we have seen the fields separted by a space character. By default Awk assumes that fields in a file are separted by space characters. If the fields in the file are separted by any other character, we can use the FS variable to tell about the delimiter. 
+
+6. awk 'BEGIN {FS=":"} {print $2}' input_file
+OR
+awk -F: '{print $2}' input_file
+
+This will print the result as 
+39 p1
+15 t1
+38 t2
+38 t3
+39 t4
+39 t5
+
+OFS - Output field separator variable: 
+
+By default whenever we printed the fields using the print statement the fields are displayed with space character as delimiter. For example
+
+7. awk '{print $4,$5}' input_file
+
+The output of this command will be
+
+center 0
+center 17
+center 26
+center 25
+center 43
+center 48
+
+We can change this default behavior using the OFS variable as
+
+awk 'BEGIN {OFS=":"} {print $4,$5}' input_file
+
+center:0
+center:17
+center:26
+center:25
+center:43
+center:48
+
+Note: print $4,$5 and print $4$5 will not work the same way. The first one displays the output with space as delimiter. The second one displays the output without any delimiter. 
+
+NF - Number of fileds variable:
+
+The NF can be used to know the number of fields in line
+
+8. awk '{print NF}' input_file
+This will display the number of columns in each row.
+
+NR - number of records variable: 
+The NR can be used to know the line number or count of lines in a file.
+
+9. awk '{print NR}' input_file
+This will display the line numbers from 1.
+
+10. awk 'END {print NR}' input_file
+This will display the total number of lines in the file.
+
+String functions in Awk:
+Some of the string functions in awk are:
+
+index(string,search)
+length(string)
+split(string,array,separator)
+substr(string,position)
+substr(string,position,max)
+tolower(string)
+toupper(string)
+
+Advanced Examples:
+
+1. Filtering lines using Awk split function
+
+The awk split function splits a string into an array using the delimiter.
+
+The syntax of split function is
+split(string, array, delimiter)
+
+Now we will see how to filter the lines using the split function with an example.
+
+The input "file.txt" contains the data in the following format
+
+1 U,N,UNIX,000
+2 N,P,SHELL,111
+3 I,M,UNIX,222
+4 X,Y,BASH,333
+5 P,R,SCRIPT,444
+
+Required output: Now we have to print only the lines in which whose 2nd field has the string "UNIX" as the 3rd field( The 2nd filed in the line is separated by comma delimiter ).
+The ouptut is:
+
+1 U,N,UNIX,000
+3 I,M,UNIX,222
+
+The awk command for getting the output is:
+
+awk '{ 
+        split($2,arr,","); 
+        if(arr[3] == "UNIX") 
+        print $0 
+} ' file.txt
