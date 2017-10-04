@@ -1,0 +1,23 @@
+#Splitting a Unix File into Smaller Files 
+
+#Let's say that we have a large unix file. 
+
+#For example, a text file called my_list with 100,000 lines. 
+
+#We need the data contained in smaller files with no more than 1000 lines each. 
+
+#unix split command: 
+
+split -1000 my_list 
+
+#This will create 100 files in the current directory that each contain 1000 lines from my_list. 
+
+#Since we did not specify a name for the output file, the files will be named by an x, followed by two letters of the alphabet (from aa to zz).
+
+#So, for example, the first 1000 lines of my_list will be in file xaa, the next 1000 lines in xab, the next 1000 in xac, etc. 
+
+#If we had specified an output file name like this: 
+
+split -1000 my_list my_list
+
+#then the output files would have been my_listaa, mylistab, etc.
