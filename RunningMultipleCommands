@@ -1,0 +1,14 @@
+#Running Multiple Unix Commands Let's look at some ways to run unix commands on the same command prompt. 
+
+$ cmd1 & cmd2 & 
+#This will run both commands in the background, in parallel. 
+
+$ cmd1; cmd2 
+#This will first run cmd1, and then cmd2. It is the equivalent of running cmd1 on the command prompt, pressing return, and then running cmd2 at the #next command prompt. 
+
+$ cmd1 && cmd2 
+#This will run cmd1 first. If cmd1 runs successfully (return code 0), then cmd2 is run. 
+
+$ cmd1 | | cmd2
+#This will run cmd1 first. If cmd1 runs un-successfully (non-zero return code), then cmd2 is run.
+`
